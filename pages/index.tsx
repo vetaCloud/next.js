@@ -21,7 +21,7 @@ export default function Home() {
     const data = await axios({
       method: 'post',
       headers: headers,
-      url: "http://3.81.11.234:8000/client",
+      url: "",
       data: formData
     })
     console.log(data)

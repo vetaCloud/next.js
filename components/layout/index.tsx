@@ -41,7 +41,7 @@ export function Layout({ children }: { children: ReactNode }) {
                   rel="noreferrer"
                   href="https://github.com/chhpt/nextjs-starter"
                 >
-                  Next.js Starter
+                  vetaCloud Next.js Starter App
                 </a>
               </li>
             </ul>

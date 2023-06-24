@@ -1,65 +1,241 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/26466516/107675802-36216b80-6c77-11eb-8db1-4d3407dc53d9.png" alt="Next.js and TypeScript">
+<img src="https://dashboard.vetacloud.com/assets/vC-png-2.a21a37aa.png"></img>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/static/v1?label=PRs&message=welcome&style=for-the-badge&color=24B36B&labelColor=000000" alt="PRs welcome!" />
+# vetaCloud v0.1 Next.js Integration
 
-  <img alt="License" src="https://img.shields.io/github/license/chhpt/typescript-nextjs-starter?style=for-the-badge&color=24B36B&labelColor=000000">
+How to use
 
-  <a href="https://twitter.com/intent/follow?screen_name=cwuyiqing">
-    <img src="https://img.shields.io/twitter/follow/cwuyiqing?style=for-the-badge&color=24B36B&labelColor=000000" alt="Follow @chhpt" />
-  </a>
-</p>
+`npm i axios`
+
+app.js
+```javascript
+var axios = require('axios');
+```
+Axios is used to post the file to our server. HTTP would be integrated in subsequent versions
+
+Your Private Key would be needed for the next process. You can get it [here](https://dashboard.vetacloud.com/api-key)
+
+# vetaCloud features avalable in Next JS
+1. Basic upload
+2. Image upload with optimization in parameters
+3. Video upload with optimization in parameters
+4. Delete file 
+5. Fetch all files in a route 
+6. Webhook
+7. Extra 
 
 <br>
+Note: Before you can upload your files, you need to create a Route. Route is the directory that you will be uploading your files to. Click [here](https://dashboard.vetacloud.com/add-route) to create one.
 
-A Next.js starter that includes all you need to build amazing projects 🔥. Fork and customize from [jpedroschmitz](https://github.com/jpedroschmitz/typescript-nextjs-starter)
+# Basic upload
 
-- 🚀 **Next.js 13 & React 18**
-- ⚙️ **Tailwind CSS 3** - A utility-first CSS framework
-- 🍓 **Styled Components** - Styling React component
-- 📏 **ESLint** — Pluggable JavaScript linter
-- 💖 **Prettier** - Opinionated Code Formatter
-- 🐶 **Husky** — Use git hooks with ease
-- 🚫 **lint-staged** - Run linters against staged git files
-- 🗂 **Absolute import** - Import folders and files using the `@` prefix
-- 🤩 **Vercel Serverless/Edge Functions** - Serverless/Edge functions for Next.js
+Your Private key can be found on your [dashboard](https://dashboard.vetacloud.com/api-key). Make sure you are sending your API KEY and Route Name in the request header.
 
-## 🚀 Getting started
+```javascript
+    const formData = new FormData();
+    formData.append("file", file);
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      X_API_KEY: "",
+      X_ROUTE_NAME: ""
+    };
 
-The best way to start with this template is using `create-next-app`.
+    const data = await axios({
+      method: 'post',
+      headers: headers,
+      url: "https://cloud.vetacloud.com/client/",
+      data: formData
+    })
+    console.log(data)
+```
+Note: Please take a look at [this](https://github.com/vetaCloud/react/blob/main/src/App.js) to understand better. The files that are uploaded via this endpoint are subject to the Route type, image optimization specified in the route and the video optimization specified 
+
+# Image upload with optimization in parameters
+Images that are uploaded via this endpoint do not regard the values specified for image optimization in the route although there could be file rejection if the file uploaded is not an image. The image formats we support at the moment include; .png .jpg .gif .jpeg .svg .webf 
+
+```javascript
+    const formData = new FormData();
+    formData.append("file", file);
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      X_API_KEY: "",
+      X_ROUTE_NAME: ""
+    };
+
+    const data = await axios({
+      method: 'post',
+      headers: headers,
+      url: "https://cloud.vetacloud.com/client/image/50/50/10",
+      data: formData
+    })
+    console.log(data)
+```
+The first parameter is the height of the image. The second parameter is the length of the image. The third parameter is the quality of the image. To use the default detail of the image's height, length or quality, use 0. If you specify height, you must specify length and vise versa. Quality could be specified alone.
+
+
+# Video upload with optimization in parameters
+Videos that are uploaded via this endpoint do not regard the values specified for video optimization in the route although there could be file rejection if the file uploaded is not a video. The image formats we support at the moment include; .mp4 .mov .wmv .avi .flv .mkv .webm .mpeg-2
+```javascript
+    const formData = new FormData();
+    formData.append("file", file);
+    const headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      X_API_KEY: "",
+      X_ROUTE_NAME: ""
+    };
+
+    const data = await axios({
+      method: 'post',
+      headers: headers,
+      url: "https://cloud.vetacloud.com/client/video/50/50/10",
+      data: formData
+    })
+    console.log(data)
+  ```
+The first parameter is the height of the video. The second parameter is the length of the video. The third parameter is the quality of the video. To use the default detail of the video's height, length or quality, use 0. If you specify height, you must specify length and vise versa. If you specify length, width and quality, only the first two would be regarded
+
+# Delete file
+
+To delete a file, the name of the file is required.
+
+```javascript
+ headers: {'X_API_KEY': '', 
+ 'X_ROUTE_NAME': "", 
+ 'X_FILE_NAME': "IHNUBDUpl2facbgCu-BSp.png"},
+
+const data = await axios({
+  method: 'delete',
+  headers: headers,
+  url: "https://cloud.vetacloud.com/client/",
+  data: formData
+})
+console.log(data)
 
 ```
-npx create-next-app ts-next -e https://github.com/chhpt/nextjs-starter
+
+# Fetch all files in a route 
+This would fetch all the files you have in a route alongside their details.
+```javascript
+headers: {'X_API_KEY': '', 'X_ROUTE_NAME': ""},
+
+const data = await axios({
+  method: 'get',
+  headers: headers,
+  url: 'https://cloud.vetacloud.com/client/files',
+  data: formData
+})
+console.log(data)
+
 ```
 
-or
+# Webhook
+The webhook for every upload is in the response's data. 
 
-```
-pnpm create next-app ts-next -e https://github.com/chhpt/nextjs-starter
-```
+### ```Successful file upload```
+A successful file upload webhook is similar to this.
+QR Route is generated for all users but the code is generated for only Advanced and Premium users. QR Route is the route of a QR Code which holds the link to the file. 
 
-If you prefer you can clone this repository and run the following commands inside the project folder:
+```javascript
+{
+  status: 201,
+  success: true,
+  message: 'Successfully Uploaded',
+  file: {
+    name: 'QeXhRhba3OVD2ZeLwguUW.jpg',
+    destination: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/QeXhRhba3OVD2ZeLwguUW.jpg',
+    size: 0.068369,
+    qrroute: 'https://cloud.vetacloud.com/qrCodes/fdd836b12c8ee44d59df6eb42972910b4df628ecf991889994b753c36bfe.png'
+  }
+}
+ ```
+ The size is in Megabyte. We believe this simplifies accountability for users.
+ 
+ ### ```Unsuccessful file upload```
+ There are so many types of errors that could be returned if a file isnt successfully uploaded but below is an example.
+ 
+ ```javascript
+ { status: 400, success: false, message: 'File too large' }
+ ```
+ 
+ ```Successful file delete```
+ Here is the response y'll get if a file has been successfully deleted 
+  ```javascript
+ {
+  status: 204,
+  success: true,
+  message: 'File successfully deleted'
+}
+ ```
+ 
+ ### ```Unsuccessful file delete```
+  When a file is not successfully deleted, the issue is mostly that the delete request has been made before, the file doesn't exist or the file name is wrong.
+   ```javascript 
+ {
+  status: 404,
+  success: false,
+  message: 'File not found. Please check your private key and file name to make sure they are correct'
+}
+  ```
+### ```Fetch all files in a route ```
 
-1. `pnpm install` or `npm install`;
-2. `pnpm dev`;
-
-To view the project open `http://localhost:3000`.
-
-## 🤝 Contributing
-
-1. Fork this repository;
-2. Create your branch: `git checkout -b my-new-feature`;
-3. Commit your changes: `git commit -m 'Add some feature'`;
-4. Push to the branch: `git push origin my-new-feature`.
-
-**After your pull request is merged**, you can safely delete your branch.
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for more information.
-
----
-
-Made with ♥ by Clare Chang
+ ```javascript 
+{
+  status: 200,
+  success: true,
+  message: [
+    {
+      name: 'bu6W9WN5FTceSgufxZ7c5.jpg',
+      upload_key: 'VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d',
+      route: 'profile-picture',
+      fileroute: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/bu6W9WN5FTceSgufxZ7c5.jpg',
+      date: 'Jul 2022 Thu at 19:4',
+      size: '68369',
+      mime_type: 'image/jpeg',
+      qrroute: 'https://cloud.vetacloud.com/qrCodes/df861cd86a8dcf90931a11405c96da460cfa9832bed107b417c94b170d2d.png'
+    },
+    {
+      name: '7lHz7iyI9Xfz2TArqImlG.jpg',
+      upload_key: 'VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d',
+      route: 'profile-picture',
+      fileroute: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/7lHz7iyI9Xfz2TArqImlG.jpg',
+      date: 'Jul 2022 Thu at 19:23',
+      size: '68369',
+      mime_type: 'image/jpeg',
+      qrroute: 'https://cloud.vetacloud.com/qrCodes/932f698d703e5d97ec8a8fcdf0a80990220d54cfd29cd9f69121f219ca87.png'
+    },
+    {
+      name: 'jjdEg3wXAUwe9TbhDGag2.jpg',
+      upload_key: 'VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d',
+      route: 'profile-picture',
+      fileroute: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/jjdEg3wXAUwe9TbhDGag2.jpg',
+      date: 'Jul 2022 Thu at 19:30',
+      size: '68369',
+      mime_type: 'image/jpeg',
+      qrroute: 'https://cloud.vetacloud.com/qrCodes/d92deb08d4daad51af5b389192cff952f1c296dadc5659efc29cf53b8731.png'
+    },
+    {
+      name: 'Hr9MezAldZqu8ZTEn5IHS.jpg',
+      upload_key: 'VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d',
+      route: 'profile-picture',
+      fileroute: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/Hr9MezAldZqu8ZTEn5IHS.jpg',
+      date: 'Jul 2022 Thu at 19:33',
+      size: '68369',
+      mime_type: 'image/jpeg',
+      qrroute: 'https://cloud.vetacloud.com/qrCodes/50b27205d5fa6a9b13ba2624722e7773828790404e9533e09cef4e9fe944.png'
+    },
+    {
+      name: 'dE0DGao5zJ7M-4qV-Rg_V.jpg',
+      upload_key: 'VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d',
+      route: 'profile-picture',
+      fileroute: 'https://cloud.vetacloud.com/uploads/VTCD_PUBLIC_f2b95f3a6138e01f51de562ff10a9d/profile-picture/dE0DGao5zJ7M-4qV-Rg_V.jpg',
+      date: 'Jul 2022 Thu at 19:38',
+      size: '68369',
+      mime_type: 'image/jpeg',
+      qrroute: 'https://cloud.vetacloud.com/qrCodes/07b0c89456563eea555daa3d5572ab5c3b3a4bc490c6064c08708ba10def.png'
+    }
+  ]
+}
+ ```
+ # Extra
+ We only support one file upload at the moment. Name your file field "file" - we recognize files faster this way. The maximum file size we allow is 300 MB. This would increase in our future updates. Okay, byeee!
